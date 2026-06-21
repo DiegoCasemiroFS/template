@@ -13,9 +13,9 @@ import java.time.LocalDate;
  * Dados recebidos para cadastrar um usuario. Validados pelo @Valid no
  * controller antes de chegar ao service.
  */
-public record UsuarioInput(
+public record UserInput(
         @NotBlank(message = "{usuario.nome.obrigatorio}")
-        String nome,
+        String name,
 
         @NotBlank(message = "{usuario.email.obrigatorio}")
         @Email(message = "{usuario.email.invalido}")
@@ -23,7 +23,7 @@ public record UsuarioInput(
 
         @NotBlank(message = "{usuario.senha.obrigatorio}")
         @Size(min = 6, message = "{usuario.senha.tamanho}")
-        String senha,
+        String password,
 
         @NotBlank(message = "{usuario.cpf.obrigatorio}")
         @CPF(message = "{usuario.cpf.invalido}")
@@ -31,6 +31,6 @@ public record UsuarioInput(
 
         @NotNull(message = "{usuario.nascimento.obrigatorio}")
         @Past(message = "{usuario.nascimento.passado}")
-        LocalDate nascimento) {
+        LocalDate birth) {
 
 }

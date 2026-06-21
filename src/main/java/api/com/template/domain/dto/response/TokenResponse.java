@@ -7,11 +7,11 @@ package api.com.template.domain.dto.response;
 public record TokenResponse(
         String accessToken,
         String refreshToken,
-        String tipo,
-        long expiraEm
+        String type,
+        long expirationTime
         ) {
 
-    public static TokenResponse bearer(String accessToken, String refreshToken, long expiraEm) {
-        return new TokenResponse(accessToken, refreshToken, "Bearer", expiraEm);
+    public static TokenResponse bearer(String accessToken, String refreshToken, long expirationTime) {
+        return new TokenResponse(accessToken, refreshToken, "Bearer", expirationTime);
     }
 }

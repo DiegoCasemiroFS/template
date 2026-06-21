@@ -1,7 +1,7 @@
 package api.com.template.config;
 
 import api.com.template.security.JwtAuthenticationFilter;
-import api.com.template.security.UsuarioDetailsService;
+import api.com.template.security.UsersDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Primary;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UsuarioDetailsService usuarioDetailsService;
+    private final UsersDetailsService usersDetailsService;
 
     private static final String[] ROTAS_PUBLICAS = {
         "/api/auth/**",
@@ -69,7 +69,7 @@ public class SecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(usuarioDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(usersDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

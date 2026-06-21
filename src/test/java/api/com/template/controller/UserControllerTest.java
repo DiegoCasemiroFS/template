@@ -2,8 +2,8 @@ package api.com.template.controller;
 
 import api.com.template.TestFixtures;
 import api.com.template.security.TokenProvider;
-import api.com.template.security.UsuarioDetailsService;
-import api.com.template.service.UsuarioService;
+import api.com.template.security.UsersDetailsService;
+import api.com.template.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,27 +20,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Teste da camada web do UsuarioController. Sobe so o controller, com o service
  * mockado e os filtros de seguranca desligados para focar no endpoint.
  */
-@WebMvcTest(UsuarioController.class)
+@WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class UsuarioControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private UsuarioService service;
+    private UserService service;
 
     @MockitoBean
     private TokenProvider tokenProvider;
 
     @MockitoBean
-    private UsuarioDetailsService usuarioDetailsService;
+    private UsersDetailsService usersDetailsService;
 
     @Test
-    void deveRetornarDadosDoUsuarioLogado() throws Exception {
-        when(service.getUsuarioLogado()).thenReturn(TestFixtures.usuario());
+    void shouldReturnUserLoggedData() throws Exception {
+        when(service.getUserLogged()).thenReturn(TestFixtures.user());
 
-        mockMvc.perform(get("/api/usuarios/me"))
+        mockMvc.perform(get("/api/users/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("maria@teste.com"))
                 .andExpect(jsonPath("$.senha").doesNotExist());

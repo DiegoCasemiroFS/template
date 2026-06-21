@@ -1,13 +1,14 @@
 package api.com.template.service;
 
 import api.com.template.domain.dto.input.LoginInput;
-import api.com.template.domain.dto.input.UsuarioInput;
+import api.com.template.domain.dto.input.UserInput;
 import api.com.template.domain.dto.response.TokenResponse;
-import api.com.template.domain.dto.response.UsuarioResponse;
-import api.com.template.exception.NaoAutorizadoException;
+import api.com.template.domain.dto.response.UserResponse;
+import api.com.template.domain.entity.User;
+import api.com.template.exception.UnauthorizedException;
 import api.com.template.security.TokenProvider;
-import api.com.template.security.UsuarioDetails;
-import api.com.template.security.UsuarioDetailsService;
+import api.com.template.security.UsersDetails;
+import api.com.template.security.UsersDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,38 +25,44 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UsuarioService service;
-    private final UsuarioDetailsService usuarioDetailsService;
+    private final UserService service;
+    private final UsersDetailsService usersDetailsService;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public UsuarioResponse registrar(UsuarioInput input) {
-        return UsuarioResponse.de(service.criar(input));
+    public UserResponse register(UserInput input) {
+        return UserResponse.from(service.save(input));
     }
 
     @Transactional(readOnly = true)
     public TokenResponse login(LoginInput input) {
+        
+        User user = service.findByEmail(input.email());
+        if (!user.isActive()) {
+            throw new UnauthorizedException("Usuario nao esta ativo");
+        }
+        
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(input.email(), input.senha()));
+                new UsernamePasswordAuthenticationToken(input.email(), input.password()));
 
-        return gerarTokens((UsuarioDetails) auth.getPrincipal());
+        return generateToken((UsersDetails) auth.getPrincipal());
     }
 
     @Transactional(readOnly = true)
-    public TokenResponse renovarToken(String refreshToken) {
-        if (!tokenProvider.validarToken(refreshToken) || !tokenProvider.ehRefreshToken(refreshToken)) {
-            throw new NaoAutorizadoException("Refresh token invalido");
+    public TokenResponse refreshToken(String refreshToken) {
+        if (!tokenProvider.validateToken(refreshToken) || !tokenProvider.isRefreshToken(refreshToken)) {
+            throw new UnauthorizedException("Refresh token invalido");
         }
 
-        String email = tokenProvider.getEmailDoToken(refreshToken);
-        UsuarioDetails usuario = (UsuarioDetails) usuarioDetailsService.loadUserByUsername(email);
-        return gerarTokens(usuario);
+        String email = tokenProvider.getEmailFromToken(refreshToken);
+        UsersDetails user = (UsersDetails) usersDetailsService.loadUserByUsername(email);
+        return generateToken(user);
     }
 
-    private TokenResponse gerarTokens(UsuarioDetails usuario) {
-        String accessToken = tokenProvider.gerarAccessToken(usuario);
-        String refreshToken = tokenProvider.gerarRefreshToken(usuario);
-        return TokenResponse.bearer(accessToken, refreshToken, tokenProvider.getExpiracaoEmSegundos());
+    private TokenResponse generateToken(UsersDetails user) {
+        String accessToken = tokenProvider.generateAccessToken(user);
+        String refreshToken = tokenProvider.generateRefreshToken(user);
+        return TokenResponse.bearer(accessToken, refreshToken, tokenProvider.getExpirationInSeconds());
     }
 }

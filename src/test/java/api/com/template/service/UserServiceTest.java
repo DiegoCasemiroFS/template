@@ -1,9 +1,8 @@
 package api.com.template.service;
 
 import api.com.template.TestFixtures;
-import api.com.template.domain.entity.Usuario;
-import api.com.template.exception.RecursoNaoEncontradoException;
-import api.com.template.repository.UsuarioRepository;
+import api.com.template.domain.entity.User;
+import api.com.template.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,36 +16,37 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
+import api.com.template.repository.UserRepository;
 
 /**
  * Testes de unidade do UsuarioService com Mockito. O repositorio e mockado, entao
  * nenhum banco e necessario; os dados vem das fixtures.
  */
 @ExtendWith(MockitoExtension.class)
-class UsuarioServiceTest {
+class UserServiceTest {
 
-    @Mock private UsuarioRepository repository;
+    @Mock private UserRepository repository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private ModelMapper mapper;
 
     @InjectMocks
-    private UsuarioService usuarioService;
+    private UserService service;
 
     @Test
-    void deveBuscarUsuarioPorIdQuandoExiste() {
-        when(repository.findById(1L)).thenReturn(Optional.of(TestFixtures.usuario()));
+    void shouldSearchUserByIdWhenExists() {
+        when(repository.findById(1L)).thenReturn(Optional.of(TestFixtures.user()));
 
-        Usuario resultado = usuarioService.buscarPorId(1L);
+        User result = service.findById(1L);
 
-        assertThat(resultado.getEmail()).isEqualTo("maria@teste.com");
+        assertThat(result.getEmail()).isEqualTo("maria@teste.com");
     }
 
     @Test
-    void deveLancarExcecaoQuandoUsuarioNaoExiste() {
+    void shouldThrowExceptionWhenUserDoesNotExist() {
         when(repository.findById(123L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> usuarioService.buscarPorId(123L))
-                .isInstanceOf(RecursoNaoEncontradoException.class)
+        assertThatThrownBy(() -> service.findById(123L))
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("123");
     }
 }

@@ -1,12 +1,12 @@
 package api.com.template.security;
 
-import api.com.template.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import api.com.template.repository.UserRepository;
 
 /**
  * Ensina o Spring Security a carregar um usuario pelo email. Usado tanto no
@@ -14,15 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class UsuarioDetailsService implements UserDetailsService {
+public class UsersDetailsService implements UserDetailsService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository repository;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return usuarioRepository.findByEmail(email)
-                .map(UsuarioDetails::new)
+        return repository.findByEmail(email)
+                .map(UsersDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario nao encontrado: " + email));
     }
 }

@@ -30,7 +30,7 @@ public class TokenProvider {
     private String secret;
 
     @Value("${app.jwt.expiration}")
-    private long expiracaoMs;
+    private long expirationsMs;
 
     @Value("${app.jwt.refresh-expiration}")
     private long refreshExpiracaoMs;
@@ -38,23 +38,23 @@ public class TokenProvider {
     @Value("${app.jwt.issuer}")
     private String issuer;
 
-    public String gerarAccessToken(UsuarioDetails usuario) {
-        return construir(usuario, expiracaoMs, false);
+    public String generateAccessToken(UsersDetails usersDetails) {
+        return build(usersDetails, expirationsMs, false);
     }
 
-    public String gerarRefreshToken(UsuarioDetails usuario) {
-        return construir(usuario, refreshExpiracaoMs, true);
+    public String generateRefreshToken(UsersDetails usersDetails) {
+        return build(usersDetails, refreshExpiracaoMs, true);
     }
 
-    public String getEmailDoToken(String token) {
+    public String getEmailFromToken(String token) {
         return getClaims(token).getSubject();
     }
 
-    public Long getIdDoToken(String token) {
+    public Long getIdFromToken(String token) {
         return getClaims(token).get(CLAIM_ID, Long.class);
     }
 
-    public boolean validarToken(String token) {
+    public boolean validateToken(String token) {
         try {
             getClaims(token);
             return true;
@@ -64,26 +64,26 @@ public class TokenProvider {
         }
     }
 
-    public boolean ehRefreshToken(String token) {
+    public boolean isRefreshToken(String token) {
         return TIPO_REFRESH.equals(getClaims(token).get(CLAIM_TIPO, String.class));
     }
 
-    public long getExpiracaoEmSegundos() {
-        return expiracaoMs / 1000;
+    public long getExpirationInSeconds() {
+        return expirationsMs / 1000;
     }
 
-    private String construir(UsuarioDetails usuario, long validadeMs, boolean refresh) {
-        Date agora = new Date();
-        Date expiracao = new Date(agora.getTime() + validadeMs);
+    private String build(UsersDetails usersDetails, long expirationDateMs, boolean refresh) {
+        Date now = new Date();
+        Date expirationTime = new Date(now.getTime() + expirationDateMs);
 
         var builder = Jwts.builder()
-                .subject(usuario.getUsername())
-                .claim(CLAIM_ID, usuario.getId())
-                .claim(CLAIM_PERFIL, usuario.getUsuario().getPerfil().name())
+                .subject(usersDetails.getUsername())
+                .claim(CLAIM_ID, usersDetails.getId())
+                .claim(CLAIM_PERFIL, usersDetails.getUser().getProfile().name())
                 .issuer(issuer)
-                .issuedAt(agora)
-                .expiration(expiracao)
-                .signWith(getChave());
+                .issuedAt(now)
+                .expiration(expirationTime)
+                .signWith(getKey());
 
         if (refresh) {
             builder.claim(CLAIM_TIPO, TIPO_REFRESH);
@@ -93,14 +93,14 @@ public class TokenProvider {
 
     private Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getChave())
+                .verifyWith(getKey())
                 .requireIssuer(issuer)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    private SecretKey getChave() {
+    private SecretKey getKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 }

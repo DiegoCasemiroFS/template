@@ -10,21 +10,21 @@ import java.util.List;
 public record ApiError(
         Instant timestamp,
         int status,
-        String erro,
-        String mensagem,
+        String error,
+        String message,
         String path,
-        List<CampoErro> campos
+        List<FieldError> field
         ) {
 
-    public record CampoErro(String campo, String mensagem) {
+    public record FieldError(String field, String message) {
 
     }
 
-    public static ApiError of(int status, String erro, String mensagem, String path) {
-        return new ApiError(Instant.now(), status, erro, mensagem, path, List.of());
+    public static ApiError of(int status, String error, String message, String path) {
+        return new ApiError(Instant.now(), status, error, message, path, List.of());
     }
 
-    public static ApiError of(int status, String erro, String mensagem, String path, List<CampoErro> campos) {
-        return new ApiError(Instant.now(), status, erro, mensagem, path, campos);
+    public static ApiError of(int status, String error, String message, String path, List<FieldError> fields) {
+        return new ApiError(Instant.now(), status, error, message, path, fields);
     }
 }

@@ -1,6 +1,6 @@
 package api.com.template.domain.entity;
 
-import api.com.template.domain.enums.PerfilEnum;
+import api.com.template.domain.enums.ProfileEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,34 +28,34 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuario")
-public class Usuario extends BaseEntity {
+@Table(name = "users")
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String nome;
+    private String name;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    private String senha;
+    private String password;
 
     @Column(nullable = false, unique = true, length = 11)
     private String cpf;
 
     @Column(nullable = false)
-    private LocalDate nascimento;
+    private LocalDate birth;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
-    private PerfilEnum perfil = PerfilEnum.USER;
+    private ProfileEnum profile = ProfileEnum.USER;
 
     @Column(nullable = false)
     @Builder.Default
-    private boolean ativo = true;
+    private boolean active = true;
 }

@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String PREFIXO = "Bearer ";
 
     private final TokenProvider tokenProvider;
-    private final UsuarioDetailsService usuarioDetailsService;
+    private final UsersDetailsService usersDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -37,13 +37,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = extrairToken(request);
+        String token = extractToken(request);
 
-        if (token != null && tokenProvider.validarToken(token)) {
-            String email = tokenProvider.getEmailDoToken(token);
-            UserDetails usuario = usuarioDetailsService.loadUserByUsername(email);
+        if (token != null && tokenProvider.validateToken(token)) {
+            String email = tokenProvider.getEmailFromToken(token);
+            UserDetails userDetails = usersDetailsService.loadUserByUsername(email);
 
-            var auth = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String extrairToken(HttpServletRequest request) {
+    private String extractToken(HttpServletRequest request) {
         String header = request.getHeader(HEADER);
         if (StringUtils.hasText(header) && header.startsWith(PREFIXO)) {
             return header.substring(PREFIXO.length());

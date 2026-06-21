@@ -13,6 +13,6 @@ public record LoginInput(
         String email,
         
         @NotBlank(message = "{usuario.senha.obrigatorio}")
-        String senha) {
+        String password) {
 
 }

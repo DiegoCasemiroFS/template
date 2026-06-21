@@ -2,9 +2,9 @@ package api.com.template.controller;
 
 import api.com.template.domain.dto.input.LoginInput;
 import api.com.template.domain.dto.input.RefreshTokenInput;
-import api.com.template.domain.dto.input.UsuarioInput;
+import api.com.template.domain.dto.input.UserInput;
 import api.com.template.domain.dto.response.TokenResponse;
-import api.com.template.domain.dto.response.UsuarioResponse;
+import api.com.template.domain.dto.response.UserResponse;
 import api.com.template.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,8 +30,8 @@ public class AuthController {
 
     @Operation(summary = "Cadastra um novo usuario")
     @PostMapping("/register")
-    public ResponseEntity<UsuarioResponse> registrar(@Valid @RequestBody UsuarioInput input) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.registrar(input));
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserInput input) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(input));
     }
 
     @Operation(summary = "Autentica e devolve access e refresh token")
@@ -42,7 +42,7 @@ public class AuthController {
 
     @Operation(summary = "Renova o par de tokens a partir do refresh token")
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> renovar(@Valid @RequestBody RefreshTokenInput input) {
-        return ResponseEntity.ok(authService.renovarToken(input.refreshToken()));
+    public ResponseEntity<TokenResponse> refreshToken(@Valid @RequestBody RefreshTokenInput input) {
+        return ResponseEntity.ok(authService.refreshToken(input.refreshToken()));
     }
 }

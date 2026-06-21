@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
-    private static final String ESQUEMA = "bearer-jwt";
+    private static final String SCHEMA = "bearer-jwt";
 
     @Bean
     public OpenAPI openAPI() {
@@ -24,10 +24,10 @@ public class OpenApiConfig {
                         .title("Template API")
                         .description("Template base Spring Boot")
                         .version("v1"))
-                .addSecurityItem(new SecurityRequirement().addList(ESQUEMA))
-                .components(new Components().addSecuritySchemes(ESQUEMA,
+                .addSecurityItem(new SecurityRequirement().addList(SCHEMA))
+                .components(new Components().addSecuritySchemes(SCHEMA,
                         new SecurityScheme()
-                                .name(ESQUEMA)
+                                .name(SCHEMA)
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")));

@@ -4,7 +4,8 @@ import api.com.template.TestFixtures;
 import api.com.template.domain.dto.input.LoginInput;
 import api.com.template.domain.dto.response.TokenResponse;
 import api.com.template.security.TokenProvider;
-import api.com.template.security.UsuarioDetails;
+import api.com.template.security.UsersDetails;
+import api.com.template.security.UsersDetailsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,8 +25,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-    @Mock private UsuarioService service;
-    @Mock private api.com.template.security.UsuarioDetailsService usuarioDetailsService;
+    @Mock private UserService service;
+    @Mock private UsersDetailsService usersDetailsService;
     @Mock private AuthenticationManager authenticationManager;
     @Mock private TokenProvider tokenProvider;
     @Mock private Authentication authentication;
@@ -34,20 +35,21 @@ class AuthServiceTest {
     private AuthService authService;
 
     @Test
-    void deveGerarTokensNoLogin() {
+    void shouldGenerateTokensOnLogin() {
         LoginInput input = TestFixtures.loginInput();
-        UsuarioDetails details = new UsuarioDetails(TestFixtures.usuario());
+        UsersDetails details = new UsersDetails(TestFixtures.user());
 
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(details);
-        when(tokenProvider.gerarAccessToken(details)).thenReturn("access-token");
-        when(tokenProvider.gerarRefreshToken(details)).thenReturn("refresh-token");
-        when(tokenProvider.getExpiracaoEmSegundos()).thenReturn(86400L);
+        when(tokenProvider.generateAccessToken(details)).thenReturn("access-token");
+        when(tokenProvider.generateRefreshToken(details)).thenReturn("refresh-token");
+        when(tokenProvider.getExpirationInSeconds()).thenReturn(86400L);
+        when(service.findByEmail(input.email())).thenReturn(TestFixtures.user());
 
-        TokenResponse resposta = authService.login(input);
+        TokenResponse response = authService.login(input);
 
-        assertThat(resposta.accessToken()).isEqualTo("access-token");
-        assertThat(resposta.refreshToken()).isEqualTo("refresh-token");
-        assertThat(resposta.tipo()).isEqualTo("Bearer");
+        assertThat(response.accessToken()).isEqualTo("access-token");
+        assertThat(response.refreshToken()).isEqualTo("refresh-token");
+        assertThat(response.type()).isEqualTo("Bearer");
     }
 }

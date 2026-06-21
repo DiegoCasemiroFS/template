@@ -1,6 +1,6 @@
 package api.com.template.security;
 
-import api.com.template.domain.entity.Usuario;
+import api.com.template.domain.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,32 +17,32 @@ import java.util.List;
  */
 @Getter
 @RequiredArgsConstructor
-public class UsuarioDetails implements UserDetails {
+public class UsersDetails implements UserDetails {
 
-    private final Usuario usuario;
+    private final User user;
 
     public Long getId() {
-        return usuario.getId();
+        return user.getId();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getPerfil().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getProfile().name()));
     }
 
     @Override
     public String getPassword() {
-        return usuario.getSenha();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return usuario.getEmail();
+        return user.getEmail();
     }
 
     @Override
     public boolean isEnabled() {
-        return usuario.isAtivo();
+        return user.isActive();
     }
 
     @Override

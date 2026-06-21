@@ -1,9 +1,9 @@
 package api.com.template;
 
 import api.com.template.domain.dto.input.LoginInput;
-import api.com.template.domain.dto.input.UsuarioInput;
-import api.com.template.domain.entity.Usuario;
-import api.com.template.domain.enums.PerfilEnum;
+import api.com.template.domain.dto.input.UserInput;
+import api.com.template.domain.entity.User;
+import api.com.template.domain.enums.ProfileEnum;
 
 import java.time.LocalDate;
 
@@ -16,21 +16,21 @@ public final class TestFixtures {
     private TestFixtures() {
     }
 
-    public static Usuario usuario() {
-        return Usuario.builder()
+    public static User user() {
+        return User.builder()
                 .id(1L)
-                .nome("Maria Teste")
+                .name("Maria Teste")
                 .email("maria@teste.com")
-                .senha("$2a$10$hashFakeParaTestes")
+                .password("$2a$10$hashFakeParaTestes")
                 .cpf("52998224725")
-                .nascimento(LocalDate.of(1990, 5, 20))
-                .perfil(PerfilEnum.USER)
-                .ativo(true)
+                .birth(LocalDate.of(1990, 5, 20))
+                .profile(ProfileEnum.USER)
+                .active(true)
                 .build();
     }
 
-    public static UsuarioInput usuarioInput() {
-        return new UsuarioInput(
+    public static UserInput userInput() {
+        return new UserInput(
                 "Maria Teste",
                 "maria@teste.com",
                 "senha123",
