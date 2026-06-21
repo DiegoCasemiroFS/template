@@ -1,0 +1,19 @@
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+
+# Variaveis de ambiente (segredos)
+.env
+
+# OS
+.DS_Store
