@@ -33,7 +33,7 @@ public class UserController {
 
     @Operation(summary = "Retorna o usuario autenticado")
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> selfData() {
+    public ResponseEntity<UserResponse> getMe() {
         return ResponseEntity.ok(UserResponse.from(service.getUserLogged()));
     }
 
